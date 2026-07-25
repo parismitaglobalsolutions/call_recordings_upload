@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maloo Group — App Permission Setup Guide</title>
+<style>
+:root {
+  --primary: #1565C0;
+  --primary-dark: #0D47A1;
+  --primary-light: #E3F2FD;
+  --success: #2E7D32;
+  --warn: #E65100;
+  --error: #C62828;
+  --bg: #F0F4F8;
+  --card: #FFFFFF;
+  --text: #1A1A2E;
+  --text-sec: #5A6A7A;
+  --border: #DDE3EA;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:15px}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(135deg,#0D47A1 0%,#1976D2 60%,#1E88E5 100%);color:#fff;padding:52px 24px 40px;text-align:center}
+.hero-logo{font-size:52px;margin-bottom:12px}
+.hero h1{font-size:clamp(22px,5vw,36px);font-weight:800;margin-bottom:10px;letter-spacing:-0.5px}
+.hero p{font-size:15px;opacity:.85;max-width:580px;margin:0 auto}
+.hero-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
+.hero-chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:#fff}
+
+/* ── Container ── */
+.container{max-width:860px;margin:0 auto;padding:28px 16px 60px}
+
+/* ── Info Banner ── */
+.info-banner{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:24px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;gap:16px;align-items:flex-start}
+.info-banner .ib-icon{font-size:34px;line-height:1;flex-shrink:0}
+.info-banner h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.info-banner p{font-size:13px;color:var(--text-sec)}
+
+/* ── Section heading ── */
+.sec-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text-sec);margin:28px 0 10px;padding-left:4px}
+
+/* ── Permission card ── */
+.perm-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;border:1px solid var(--border)}
+.perm-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.perm-header:hover{background:#F8FAFC}
+.perm-header:active{background:#EEF2F6}
+.perm-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.perm-meta{flex:1;min-width:0}
+.perm-name{font-weight:700;font-size:15px;color:var(--text)}
+.perm-sub{font-size:12px;color:var(--text-sec);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.badge-r{background:#FFEBEE;color:var(--error)}
+.badge-i{background:#FFF3E0;color:var(--warn)}
+.badge-g{background:#E8F5E9;color:var(--success)}
+.chevron{font-size:12px;color:var(--text-sec);transition:transform .3s;flex-shrink:0;margin-left:4px}
+.perm-card.open .chevron{transform:rotate(180deg)}
+
+/* ── Perm body ── */
+.perm-body{display:none;border-top:1px solid var(--border);padding:20px}
+.perm-card.open .perm-body{display:block}
+
+/* ── Why box ── */
+.why-box{background:var(--primary-light);border-left:3px solid var(--primary);border-radius:0 8px 8px 0;padding:13px 15px;margin-bottom:20px;font-size:13px;color:#1A237E}
+.why-box strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;opacity:.7}
+
+/* ── Device tabs ── */
+.device-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.dtab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-sec);transition:all .2s;-webkit-tap-highlight-color:transparent}
+.dtab:hover{border-color:var(--primary);color:var(--primary)}
+.dtab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.dsteps{display:none}
+.dsteps.active{display:block}
+
+/* ── Steps ── */
+ol.steps{list-style:none;counter-reset:step}
+ol.steps li{counter-increment:step;display:flex;gap:13px;margin-bottom:13px;align-items:flex-start}
+ol.steps li::before{content:counter(step);min-width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+ol.steps li div{font-size:14px;color:var(--text);padding-top:4px}
+.path{display:inline;background:#F0F4F8;border:1px solid #D0D9E3;border-radius:5px;padding:1px 7px;font-size:12px;font-family:monospace;color:#1A237E;white-space:nowrap}
+
+/* ── Tip / Warning boxes ── */
+.tip{background:#FFFDE7;border-left:3px solid #F9A825;border-radius:0 8px 8px 0;padding:11px 14px;font-size:13px;color:#5D4037;margin-top:14px}
+.tip strong{color:#BF360C}
+.warn-box{background:#FFF3E0;border-left:3px solid #FF9800;border-radius:0 8px 8px 0;padding:11px 14px;font-size:13px;color:#4E342E;margin-top:14px}
+.warn-box strong{color:#E65100}
+
+/* ── Autostart special section ── */
+.as-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:4px}
+.as-card{background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:14px}
+.as-card h4{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--primary-dark)}
+.as-card ol.steps li{margin-bottom:8px}
+.as-card ol.steps li div{font-size:13px}
+
+/* ── FAQ ── */
+.faq-card{background:var(--card);border-radius:var(--radius);padding:0;margin-bottom:8px;box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}
+.faq-q{font-weight:700;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;-webkit-tap-highlight-color:transparent}
+.faq-q:hover{background:#F8FAFC}
+.faq-a{font-size:13px;color:var(--text-sec);padding:0 18px 16px;display:none;border-top:1px solid var(--border);padding-top:14px;margin-top:0}
+.faq-card.open .faq-a{display:block}
+.faq-card.open .faq-q .chevron{transform:rotate(180deg)}
+
+/* ── Footer ── */
+footer{text-align:center;padding:24px 16px;font-size:12px;color:var(--text-sec);border-top:1px solid var(--border);margin-top:8px;background:var(--card)}
+
+@media(max-width:600px){
+  .hero{padding:36px 16px 30px}
+  .perm-header{padding:14px}
+  .perm-body{padding:14px}
+  .perm-sub{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-logo">📱</div>
+  <h1>App Permission Setup Guide</h1>
+  <p>Maloo Group Recordings Uploader — Enable all required permissions so recordings upload automatically every day without any manual action.</p>
+  <div class="hero-chips">
+    <span class="hero-chip">Android 8+</span>
+    <span class="hero-chip">Xiaomi MIUI</span>
+    <span class="hero-chip">Samsung One UI</span>
+    <span class="hero-chip">Realme / OPPO</span>
+    <span class="hero-chip">OnePlus</span>
+    <span class="hero-chip">Vivo</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Info banner -->
+  <div class="info-banner">
+    <div class="ib-icon">⚠️</div>
+    <div>
+      <h3>All permissions must be enabled for automatic uploads to work</h3>
+      <p>Android and phone manufacturers aggressively restrict background apps to save battery. Skipping any step below may cause recordings to not upload — especially on Xiaomi, Samsung, and Realme devices. Follow every step carefully.</p>
+    </div>
+  </div>
+
+  <!-- ═══ CRITICAL PERMISSIONS ══════════════════════════════════════════ -->
+  <div class="sec-label">🔴 Critical — Must Enable</div>
+
+  <!-- ── 1. Call Log ──────────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-calllog">
+    <div class="perm-header" onclick="toggle('p-calllog')">
+      <div class="perm-icon" style="background:#E3F2FD">📞</div>
+      <div class="perm-meta">
+        <div class="perm-name">Call Log Permission</div>
+        <div class="perm-sub">Read call history to match recordings with calls</div>
+      </div>
+      <span class="badge badge-r">Required</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        The app reads your call history to identify each recording — whether the call was incoming or outgoing, its duration, and which SIM was used. Without this, recordings cannot be properly labeled when uploaded.
+      </div>
+      <div class="device-tabs">
+        <button class="dtab active" onclick="tab('calllog','stock',this)">Stock Android</button>
+        <button class="dtab" onclick="tab('calllog','miui',this)">Xiaomi MIUI</button>
+        <button class="dtab" onclick="tab('calllog','samsung',this)">Samsung</button>
+        <button class="dtab" onclick="tab('calllog','realme',this)">Realme / OPPO</button>
+        <button class="dtab" onclick="tab('calllog','oneplus',this)">OnePlus</button>
+        <button class="dtab" onclick="tab('calllog','vivo',this)">Vivo</button>
+      </div>
+      <div id="calllog-stock" class="dsteps active">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong></div></li>
+          <li><div>Tap <strong>Apps</strong> (or <strong>Application Manager</strong>)</div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Permissions</strong></div></li>
+          <li><div>Tap <strong>Call logs</strong> → select <strong>Allow</strong></div></li>
+        </ol>
+      </div>
+      <div id="calllog-miui" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong> → <strong>Manage apps</strong></div></li>
+          <li><div>Search and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Permissions</strong></div></li>
+          <li><div>Tap <strong>Call logs</strong> → select <strong>Allow</strong></div></li>
+        </ol>
+        <div class="tip"><strong>Alternative:</strong> Open the <strong>Security</strong> app → <strong>Permissions</strong> → <strong>Call logs</strong> → find the app and enable it.</div>
+      </div>
+      <div id="calllog-samsung" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+          <li><div>Tap the app name <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Permissions</strong></div></li>
+          <li><div>Tap <strong>Call logs</strong> → select <strong>Allow</strong></div></li>
+        </ol>
+      </div>
+      <div id="calllog-realme" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>App Management</strong></div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Permissions</strong></div></li>
+          <li><div>Tap <strong>Call logs</strong> → select <strong>Always allow</strong></div></li>
+        </ol>
+      </div>
+      <div id="calllog-oneplus" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong> → <strong>App management</strong></div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Permissions</strong></div></li>
+          <li><div>Tap <strong>Call logs</strong> → select <strong>Allow</strong></div></li>
+        </ol>
+      </div>
+      <div id="calllog-vivo" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps & notifications</strong> → <strong>App management</strong></div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Permissions</strong></div></li>
+          <li><div>Tap <strong>Call logs</strong> → select <strong>Allow</strong></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. Battery Optimization ─────────────────────────────────────── -->
+  <div class="perm-card" id="p-battery">
+    <div class="perm-header" onclick="toggle('p-battery')">
+      <div class="perm-icon" style="background:#E8F5E9">🔋</div>
+      <div class="perm-meta">
+        <div class="perm-name">Battery Optimization — Disable</div>
+        <div class="perm-sub">Allow app to run in background without being killed</div>
+      </div>
+      <span class="badge badge-r">Required</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        Android kills background apps to save battery. If battery optimization is active for this app, the daily upload alarm will be silenced and recordings will never upload. You must exempt this app from battery optimization.
+      </div>
+      <div class="device-tabs">
+        <button class="dtab active" onclick="tab('batt','stock',this)">Stock Android</button>
+        <button class="dtab" onclick="tab('batt','miui',this)">Xiaomi MIUI</button>
+        <button class="dtab" onclick="tab('batt','samsung',this)">Samsung</button>
+        <button class="dtab" onclick="tab('batt','realme',this)">Realme / OPPO</button>
+        <button class="dtab" onclick="tab('batt','oneplus',this)">OnePlus</button>
+        <button class="dtab" onclick="tab('batt','vivo',this)">Vivo</button>
+      </div>
+      <div id="batt-stock" class="dsteps active">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+          <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Battery</strong></div></li>
+          <li><div>Select <strong>Unrestricted</strong> (do NOT select "Optimized" or "Restricted")</div></li>
+        </ol>
+        <div class="tip"><strong>Alternative path:</strong> Settings → Battery → Battery optimization → All apps → Maloo Recordings → <strong>Don't optimize</strong></div>
+      </div>
+      <div id="batt-miui" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong> → <strong>Manage apps</strong></div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Battery saver</strong></div></li>
+          <li><div>Select <strong>No restrictions</strong></div></li>
+        </ol>
+        <div class="warn-box"><strong>⚠️ MIUI Extra Step (very important):</strong> Open <strong>Security</strong> app → <strong>Battery</strong> → <strong>App battery saver</strong> → find <strong>Maloo Recordings</strong> → set to <strong>No restriction</strong>. MIUI has TWO separate battery controls — both must be set.</div>
+      </div>
+      <div id="batt-samsung" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+          <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Battery</strong></div></li>
+          <li><div>Select <strong>Unrestricted</strong></div></li>
+        </ol>
+        <div class="tip"><strong>Also do this:</strong> Settings → <strong>Battery and device care</strong> → <strong>Battery</strong> → <strong>Background usage limits</strong> → <strong>Never sleeping apps</strong> → tap <strong>+</strong> and add <strong>Maloo Recordings</strong>.</div>
+      </div>
+      <div id="batt-realme" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>App Management</strong></div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Battery usage</strong></div></li>
+          <li><div>Select <strong>No restrictions</strong></div></li>
+        </ol>
+        <div class="tip"><strong>Alternative:</strong> Settings → <strong>Battery</strong> → <strong>Battery optimization</strong> → find <strong>Maloo Recordings</strong> → <strong>Don't optimize</strong></div>
+      </div>
+      <div id="batt-oneplus" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong> → <strong>App management</strong></div></li>
+          <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Battery</strong></div></li>
+          <li><div>Select <strong>Unrestricted</strong> or <strong>Don't optimize</strong></div></li>
+        </ol>
+        <div class="tip"><strong>Also check:</strong> Settings → <strong>Battery</strong> → <strong>Battery optimization</strong> → All apps → Maloo Recordings → <strong>Don't optimize</strong></div>
+      </div>
+      <div id="batt-vivo" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Battery</strong></div></li>
+          <li><div>Tap <strong>Background power consumption</strong></div></li>
+          <li><div>Find <strong>Maloo Recordings</strong></div></li>
+          <li><div>Select <strong>No restrictions</strong></div></li>
+        </ol>
+        <div class="tip"><strong>Also check:</strong> Open <strong>iManager</strong> → <strong>App manager</strong> → <strong>Background freeze</strong> → make sure <strong>Maloo Recordings</strong> is NOT in the frozen list.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. Autostart ─────────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-autostart">
+    <div class="perm-header" onclick="toggle('p-autostart')">
+      <div class="perm-icon" style="background:#FCE4EC">🚀</div>
+      <div class="perm-meta">
+        <div class="perm-name">Autostart / Background Launch</div>
+        <div class="perm-sub">Allow app to start itself in the background after phone restart</div>
+      </div>
+      <span class="badge badge-r">Required</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        When the phone restarts, apps cannot start themselves unless Autostart is enabled. Without this, the daily upload alarm is lost after every reboot and recordings will stop uploading until you manually open the app again.
+      </div>
+      <div class="warn-box" style="margin-bottom:18px"><strong>⚠️ This setting exists only on certain brands.</strong> Stock Android (Pixel), OnePlus, and some others do not have a separate Autostart toggle. If you don't see it, you can skip this step.</div>
+      <div class="as-grid">
+        <div class="as-card">
+          <h4>📱 Xiaomi MIUI</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Security</strong> app</div></li>
+            <li><div>Tap <strong>Permissions</strong></div></li>
+            <li><div>Tap <strong>Autostart</strong></div></li>
+            <li><div>Find <strong>Maloo Recordings</strong> → toggle <strong>ON</strong></div></li>
+          </ol>
+          <div class="tip" style="margin-top:10px"><strong>Alt path:</strong> Settings → Apps → Manage apps → Maloo Recordings → Other permissions → Autostart → Enable</div>
+        </div>
+        <div class="as-card">
+          <h4>📱 Samsung One UI</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Settings</strong> → <strong>Battery and device care</strong></div></li>
+            <li><div>Tap <strong>Battery</strong> → <strong>App power management</strong></div></li>
+            <li><div>Tap <strong>Sleeping apps</strong> — if app is listed, swipe to remove it</div></li>
+            <li><div>Also check <strong>Deep sleeping apps</strong> and remove if listed</div></li>
+          </ol>
+        </div>
+        <div class="as-card">
+          <h4>📱 Realme / OPPO ColorOS</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Settings</strong> → <strong>App Management</strong></div></li>
+            <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+            <li><div>Tap <strong>Autostart</strong> → toggle <strong>ON</strong></div></li>
+          </ol>
+          <div class="tip" style="margin-top:10px"><strong>Also:</strong> Phone Manager → App performance → Background freeze → ensure app is NOT frozen.</div>
+        </div>
+        <div class="as-card">
+          <h4>📱 Vivo FuntouchOS</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Settings</strong> → <strong>Apps & notifications</strong></div></li>
+            <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+            <li><div>Tap <strong>Autostart</strong> → toggle <strong>ON</strong></div></li>
+            <li><div>Also enable <strong>Allow background activity</strong></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. Storage / SAF ─────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-storage">
+    <div class="perm-header" onclick="toggle('p-storage')">
+      <div class="perm-icon" style="background:#F3E5F5">📂</div>
+      <div class="perm-meta">
+        <div class="perm-name">Storage Access — Select Recordings Folder</div>
+        <div class="perm-sub">Grant the app access to your call recordings folder</div>
+      </div>
+      <span class="badge badge-r">Required</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        Android requires you to manually select the folder where your call recordings are saved. The app cannot access any files until you pick this folder. This is a one-time setup done inside the app.
+      </div>
+      <ol class="steps">
+        <li><div>Open the <strong>Maloo Recordings</strong> app</div></li>
+        <li><div>On the setup screen, find <strong>"Recordings folder"</strong> section</div></li>
+        <li><div>Tap <strong>Select</strong> — your phone's file picker will open</div></li>
+        <li><div>Navigate to the folder where your call recorder app saves recordings<br><span style="font-size:12px;color:var(--text-sec)">Common locations: Internal Storage → Call recordings / MIUI / Sounds / CallRecord</span></div></li>
+        <li><div>Tap <strong>Use this folder</strong> (or <strong>Allow</strong>) to confirm access</div></li>
+      </ol>
+      <div class="tip"><strong>Not sure where recordings are saved?</strong> Open your call recording app → go to its settings → look for "Save location" or "Storage path". Common default folders on Xiaomi: <span class="path">MIUI/sound_recorder/call_rec</span>. On Samsung: <span class="path">Recordings/Call</span>. On stock Android: <span class="path">Call recordings</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ IMPORTANT PERMISSIONS ═════════════════════════════════════════ -->
+  <div class="sec-label">🟠 Important — Strongly Recommended</div>
+
+  <!-- ── 5. Notifications ─────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-notif">
+    <div class="perm-header" onclick="toggle('p-notif')">
+      <div class="perm-icon" style="background:#FFF3E0">🔔</div>
+      <div class="perm-meta">
+        <div class="perm-name">Notification Permission</div>
+        <div class="perm-sub">Required on Android 13 and above to show upload status</div>
+      </div>
+      <span class="badge badge-i">Android 13+</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        On Android 13 and above, apps must ask permission before showing notifications. This app uses notifications to let WorkManager run background tasks reliably. If denied, the background upload worker may not start on some devices.
+      </div>
+      <div class="device-tabs">
+        <button class="dtab active" onclick="tab('notif','stock',this)">Stock Android</button>
+        <button class="dtab" onclick="tab('notif','miui',this)">Xiaomi MIUI</button>
+        <button class="dtab" onclick="tab('notif','samsung',this)">Samsung</button>
+        <button class="dtab" onclick="tab('notif','realme',this)">Realme / OPPO</button>
+      </div>
+      <div id="notif-stock" class="dsteps active">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+          <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Notifications</strong></div></li>
+          <li><div>Toggle <strong>Allow notifications</strong> to ON</div></li>
+        </ol>
+        <div class="tip">The app will also ask for this permission automatically when first opened. Simply tap <strong>Allow</strong> on the dialog that appears.</div>
+      </div>
+      <div id="notif-miui" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong> → <strong>Manage apps</strong></div></li>
+          <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Notifications</strong></div></li>
+          <li><div>Toggle <strong>Enable notifications</strong> to ON</div></li>
+        </ol>
+        <div class="tip"><strong>MIUI tip:</strong> Notifications might also be controlled in MIUI's notification center. Check <span class="path">Settings → Notifications & status bar → App notifications</span>.</div>
+      </div>
+      <div id="notif-samsung" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+          <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Notifications</strong></div></li>
+          <li><div>Toggle <strong>Allow notifications</strong> to ON</div></li>
+        </ol>
+      </div>
+      <div id="notif-realme" class="dsteps">
+        <ol class="steps">
+          <li><div>Open <strong>Settings</strong> → <strong>App Management</strong></div></li>
+          <li><div>Tap <strong>Maloo Recordings</strong></div></li>
+          <li><div>Tap <strong>Notifications</strong> → toggle ON</div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 6. Background Restriction ───────────────────────────────────── -->
+  <div class="perm-card" id="p-bgrestrict">
+    <div class="perm-header" onclick="toggle('p-bgrestrict')">
+      <div class="perm-icon" style="background:#E8EAF6">⛔</div>
+      <div class="perm-meta">
+        <div class="perm-name">Background Restriction — Disable</div>
+        <div class="perm-sub">Ensure background jobs are not blocked by the system</div>
+      </div>
+      <span class="badge badge-i">Important</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        If Android has marked this app as "background restricted", all background work (including the daily upload job) is completely blocked. This can happen automatically if the app is not used frequently enough.
+      </div>
+      <ol class="steps">
+        <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+        <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+        <li><div>Tap <strong>Battery</strong></div></li>
+        <li><div>Make sure <strong>"Background activity"</strong> or <strong>"Allow background usage"</strong> is enabled</div></li>
+        <li><div>If you see "Background restricted" — tap it and select <strong>Unrestricted</strong></div></li>
+      </ol>
+      <div class="tip"><strong>How to check:</strong> Go to Settings → Apps → Maloo Recordings → Battery. If it says "Restricted", that's the problem. Change to "Unrestricted".</div>
+    </div>
+  </div>
+
+  <!-- ═══ ADDITIONAL SETTINGS ═══════════════════════════════════════════ -->
+  <div class="sec-label">🟡 Additional Settings</div>
+
+  <!-- ── 7. Exact Alarm ───────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-alarm">
+    <div class="perm-header" onclick="toggle('p-alarm')">
+      <div class="perm-icon" style="background:#E0F2F1">⏰</div>
+      <div class="perm-meta">
+        <div class="perm-name">Alarms &amp; Reminders</div>
+        <div class="perm-sub">Required on Android 12 for exact daily scheduling</div>
+      </div>
+      <span class="badge badge-i">Android 12 only</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        On Android 12 specifically, apps must have special permission to schedule alarms at an exact time. The app uses this to trigger the daily upload at your configured time (e.g. 7:00 PM). On Android 13 and above, this is automatically granted and you don't need to do anything.
+      </div>
+      <ol class="steps">
+        <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+        <li><div>Tap the three-dot menu (⋮) or scroll down to find <strong>Special app access</strong></div></li>
+        <li><div>Tap <strong>Alarms &amp; reminders</strong></div></li>
+        <li><div>Find <strong>Maloo Recordings</strong> → toggle to <strong>Allow</strong></div></li>
+      </ol>
+      <div class="tip"><strong>Note:</strong> The app will automatically open this settings page during first-time setup if the permission is missing. Simply tap <strong>Allow</strong> when that page opens.</div>
+    </div>
+  </div>
+
+  <!-- ── 8. Auto Revoke ───────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-autorevoke">
+    <div class="perm-header" onclick="toggle('p-autorevoke')">
+      <div class="perm-icon" style="background:#FBE9E7">🔄</div>
+      <div class="perm-meta">
+        <div class="perm-name">Auto Revoke / Permission Removal — Disable</div>
+        <div class="perm-sub">Prevent Android from removing permissions if app is unused</div>
+      </div>
+      <span class="badge badge-g">Recommended</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        Android 11+ can automatically remove permissions from apps that haven't been opened in a few months. Since this app runs silently in the background and employees rarely open it manually, Android may revoke Call Log permission after 2–3 months of not opening the app — breaking uploads silently.
+      </div>
+      <ol class="steps">
+        <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+        <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+        <li><div>Scroll down and tap <strong>Permissions</strong></div></li>
+        <li><div>Look for <strong>"Remove permissions if app is unused"</strong> or <strong>"Pause app activity if unused"</strong></div></li>
+        <li><div>Toggle it <strong>OFF</strong></div></li>
+      </ol>
+      <div class="tip"><strong>Can't find this setting?</strong> Some devices don't show this toggle. It may appear as: <em>"Delete app if unused"</em>, <em>"Revoke permissions if unused"</em>, or <em>"App hibernation"</em>. Look for any "unused app" related option inside the app's settings page.</div>
+    </div>
+  </div>
+
+  <!-- ── 9. App Hibernation ────────────────────────────────────────────── -->
+  <div class="perm-card" id="p-hibernate">
+    <div class="perm-header" onclick="toggle('p-hibernate')">
+      <div class="perm-icon" style="background:#EDE7F6">😴</div>
+      <div class="perm-meta">
+        <div class="perm-name">App Hibernation — Disable</div>
+        <div class="perm-sub">Android 12+ puts unused apps to sleep, blocking background work</div>
+      </div>
+      <span class="badge badge-g">Recommended</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="why-box">
+        <strong>Why it's needed</strong>
+        Android 12+ can hibernate apps that aren't opened frequently. A hibernated app has all its background jobs stopped and permissions revoked. Since this app runs silently, it's at risk of being hibernated if employees rarely tap on it.
+      </div>
+      <ol class="steps">
+        <li><div>Open <strong>Settings</strong> → <strong>Apps</strong></div></li>
+        <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+        <li><div>Look for <strong>Unused app settings</strong> or <strong>Hibernate</strong></div></li>
+        <li><div>Disable <strong>"Pause app activity if unused"</strong> or <strong>"Hibernate"</strong></div></li>
+      </ol>
+      <div class="tip"><strong>Tip:</strong> Opening the app briefly every few weeks also prevents hibernation. But disabling the toggle is the more reliable fix.</div>
+    </div>
+  </div>
+
+  <!-- ═══ XIAOMI SPECIAL ════════════════════════════════════════════════ -->
+  <div class="sec-label">📱 Xiaomi MIUI — Extra Required Steps</div>
+
+  <div class="perm-card" id="p-miui-extra">
+    <div class="perm-header" onclick="toggle('p-miui-extra')">
+      <div class="perm-icon" style="background:#FF6D00;color:white">Mi</div>
+      <div class="perm-meta">
+        <div class="perm-name">Xiaomi MIUI Special Permissions</div>
+        <div class="perm-sub">MIUI has extra restrictions not found on other Android phones</div>
+      </div>
+      <span class="badge badge-r">Xiaomi Only</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="perm-body">
+      <div class="warn-box" style="margin-bottom:18px"><strong>⚠️ Important:</strong> Xiaomi MIUI is one of the most restrictive Android skins. Standard battery and permission settings are NOT enough — you must also complete the steps below or uploads will fail silently.</div>
+      <div class="as-grid">
+        <div class="as-card">
+          <h4>1. Autostart Permission</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Security</strong> app (orange shield icon)</div></li>
+            <li><div>Tap <strong>Permissions</strong> or <strong>Manage permissions</strong></div></li>
+            <li><div>Tap <strong>Autostart</strong></div></li>
+            <li><div>Find <strong>Maloo Recordings</strong> → toggle <strong>ON</strong></div></li>
+          </ol>
+        </div>
+        <div class="as-card">
+          <h4>2. No Background Restrictions</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Settings</strong> → <strong>Apps</strong> → <strong>Manage apps</strong></div></li>
+            <li><div>Find and tap <strong>Maloo Recordings</strong></div></li>
+            <li><div>Tap <strong>Other permissions</strong></div></li>
+            <li><div>Enable <strong>Run in background</strong></div></li>
+            <li><div>Enable <strong>Start in background</strong></div></li>
+          </ol>
+        </div>
+        <div class="as-card">
+          <h4>3. Lock App in Memory</h4>
+          <ol class="steps">
+            <li><div>Open the <strong>Recent apps</strong> screen (square button)</div></li>
+            <li><div>Find <strong>Maloo Recordings</strong> app card</div></li>
+            <li><div>Tap the <strong>lock icon</strong> 🔒 on the app card</div></li>
+            <li><div>The app is now locked and won't be killed when clearing recents</div></li>
+          </ol>
+        </div>
+        <div class="as-card">
+          <h4>4. MIUI Optimization (if issues persist)</h4>
+          <ol class="steps">
+            <li><div>Open <strong>Settings</strong> → <strong>Additional settings</strong></div></li>
+            <li><div>Tap <strong>Developer options</strong> (enable if needed: tap Build number 7 times)</div></li>
+            <li><div>Find <strong>MIUI optimization</strong></div></li>
+            <li><div>Toggle it <strong>OFF</strong> — this gives apps more freedom</div></li>
+          </ol>
+          <div class="tip" style="margin-top:8px"><strong>Note:</strong> Only do this if uploads are still failing after all other steps.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FAQ ═══════════════════════════════════════════════════════════ -->
+  <div class="sec-label">❓ Frequently Asked Questions</div>
+
+  <div class="faq-card" id="faq1">
+    <div class="faq-q" onclick="faq('faq1')">
+      <span>Do I need to keep the app open for uploads to happen?</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="faq-a">
+      No. Once set up, the app runs entirely in the background. You can close it completely. The upload runs automatically at your configured daily time (e.g. 7:00 PM). You never need to open the app manually for uploads to work.
+    </div>
+  </div>
+
+  <div class="faq-card" id="faq2">
+    <div class="faq-q" onclick="faq('faq2')">
+      <span>Uploads stopped working after a phone restart — what should I do?</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="faq-a">
+      This usually means Autostart is not enabled. After a restart, the app needs permission to reschedule its alarm. Enable Autostart (see the Autostart section above for your device). Also open the app once after a restart to verify the alarm is re-armed — then you don't need to open it again.
+    </div>
+  </div>
+
+  <div class="faq-card" id="faq3">
+    <div class="faq-q" onclick="faq('faq3')">
+      <span>The app was working before but suddenly stopped uploading — why?</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="faq-a">
+      Common causes: (1) Android revoked a permission because the app was unused — open the app and re-grant permissions. (2) Battery optimization was re-applied after a system update — go back to battery settings and set to Unrestricted again. (3) App was hibernated — open the app to wake it up. Your IT admin can also remotely trigger a diagnostic check to see the exact issue.
+    </div>
+  </div>
+
+  <div class="faq-card" id="faq4">
+    <div class="faq-q" onclick="faq('faq4')">
+      <span>I don't see a "Manage apps" or "Battery saver" option — where is it?</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="faq-a">
+      Settings menus vary between Android versions and phone brands. Try these alternatives: (1) Use the search bar inside Settings and type "battery optimization" or "apps". (2) On Xiaomi, the Security app has many of these settings. (3) On Samsung, look under "Battery and device care". If you're still stuck, ask your IT admin to assist remotely using the health check feature.
+    </div>
+  </div>
+
+  <div class="faq-card" id="faq5">
+    <div class="faq-q" onclick="faq('faq5')">
+      <span>Is it safe to grant all these permissions to this app?</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="faq-a">
+      Yes. This app is developed and managed by your company (Maloo Group). It only reads call logs and recordings from the folder you selected during setup. It does not access personal messages, contacts, photos, or any other data. All recordings are uploaded exclusively to your company's OneDrive/SharePoint account.
+    </div>
+  </div>
+
+  <div class="faq-card" id="faq6">
+    <div class="faq-q" onclick="faq('faq6')">
+      <span>What happens if a recording fails to upload?</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="faq-a">
+      The app automatically retries up to 3 times. If all retries fail (e.g. no internet), it logs the failure and tries again at the next scheduled upload. Failed uploads are also reported to your admin through the health check system, so the IT team is notified without you needing to do anything.
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Maloo Group Recordings Uploader &nbsp;·&nbsp; Permission Setup Guide &nbsp;·&nbsp; For support contact your IT administrator
+</footer>
+
+<script>
+function toggle(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function tab(perm, device, btn) {
+  var body = btn.closest('.perm-body');
+  body.querySelectorAll('.dtab').forEach(function(t){ t.classList.remove('active'); });
+  body.querySelectorAll('.dsteps').forEach(function(s){ s.classList.remove('active'); });
+  btn.classList.add('active');
+  var el = document.getElementById(perm + '-' + device);
+  if (el) el.classList.add('active');
+}
+
+function faq(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// Open first card by default
+document.addEventListener('DOMContentLoaded', function(){
+  var first = document.querySelector('.perm-card');
+  if (first) first.classList.add('open');
+});
+</script>
+</body>
+</html>
