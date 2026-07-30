@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /api/
+
+# Route /api/call-data to call-data.php
+RewriteRule ^call-data$ call-data.php [L,QSA]

@@ -1,0 +1,7 @@
+
+RewriteEngine On
+
+# Protect config and includes directories
+<FilesMatch "^(database|config|includes)">
+    Require all denied
+</FilesMatch>
